@@ -8,8 +8,7 @@ void Reporter::handleError(std::string message, bool terminal) {
   }
 }
 
-
-void Reporter::handleError(std::string message, uint32_t lineno, bool terminal) {
+void Reporter::handleError(std::string message, int lineno, bool terminal) {
   std::cout << "[line " << lineno << "] Error: " << message << "\n";
   if (terminal) {
     std::exit(EXIT_FAILURE);

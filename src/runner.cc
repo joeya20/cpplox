@@ -43,17 +43,18 @@ void runFile(std::string path, Reporter& reporter) {
 
 void runConsole(Reporter& reporter) {
   std::string cmd;
-  std::cout << "> ";
+  std::cout << ">> ";
   while(std::getline(std::cin, cmd)) {
     run(cmd, reporter);
+    std::cout << ">> ";
   }
 }
 
 void run(std::string prog, Reporter& reporter) {
   Scanner scanner{prog, reporter};
-  std::vector<Token>& tokens  = scanner.getTokens();
+  std::vector<Token>& tokens  = scanner.scanTokens();
 
   for(auto& token : tokens) {
-    std::cout << "Token: " << token.lexeme() << "\n";
+    std::cout << "Token: " << token.toString() << "\n";
   }
 }
