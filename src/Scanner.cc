@@ -161,7 +161,7 @@ void Scanner::handleString() {
     }
     // check for error
     if (isAtEnd()) {
-      reporter.handleError("Unterminated string.", line, true);
+      reporter.handleError("Unterminated string.", line);
       return;
     }
     // The closing ".
@@ -184,7 +184,7 @@ void Scanner::handleNum() {
       }
     }
     else {
-      reporter.handleError("Invalid number literal", line, true);
+      reporter.handleError("Invalid number literal", line);
     }
   }
   addToken(Token::TokenType::NUMBER);
@@ -194,6 +194,8 @@ void Scanner::handleIdent() {
   while(isAlphaNum(peek()) && !isAtEnd()) {
     advance();
   }
+  // check if its a keyword
+  // this can also be done during AST creation, I think
   auto val = source.substr(start, current);
   if (auto kw = keywords.find(val); kw != keywords.end()) {
     addToken(kw->second);

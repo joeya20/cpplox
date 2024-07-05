@@ -1,5 +1,6 @@
 #include "Reporter.hh"
 #include "runner.hh"
+#include <cstdlib>
 #include <sstream>
 #include <fstream>
 #include <filesystem>
@@ -15,15 +16,18 @@ int main(int argc, char* argv[]) {
   Reporter reporter {};
 
   if(argc > 2) {
-    reporter.handleError("Expected 1 argument", true);
+    std::cerr << "Expected 1 argument, got " << argc << "\n";
+    exit(EXIT_FAILURE);
   }
   else if (argc == 2) {
     std::string filepath = std::string{argv[1]};
     if(!fs::exists(filepath)) {
-      reporter.handleError("Invalid path provided, file does not exist", true);
+      std::cerr << "Invalid path provided, file does not exist\n";
+      exit(EXIT_FAILURE);
     }
     if(!fs::is_regular_file(filepath)) {
-      reporter.handleError("Invalid path provided, not a file", true);
+      std::cerr << "Invalid path provided, not a file\n";
+      exit(EXIT_FAILURE);
     }
     runFile(filepath, reporter);
   }
@@ -39,6 +43,13 @@ void runFile(std::string path, Reporter& reporter) {
   std::stringstream buffer;
   buffer << ifs.rdbuf();
   run(buffer.str(), reporter);
+  if(reporter.hasErrors()) {
+    reporter.reportErrors();
+    exit(EXIT_FAILURE);
+  }
+  else {
+    reporter.reportWarnings();
+  }
 }
 
 void runConsole(Reporter& reporter) {
