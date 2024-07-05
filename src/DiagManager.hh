@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-class Reporter {
+class DiagManager {
   private:
     int numWarnings;
     std::vector<std::pair<int, std::string>> warnings;
@@ -15,4 +15,10 @@ class Reporter {
     void handleWarning(std::string message, int lineno);
     void handleError(std::string message);
     void handleError(std::string message, int lineno);
+    void report();
+    void clear();
+    void clearErrors();
+    void clearWarnings();
+    void reportErrors();
+    void reportWarnings();
 };

@@ -3,13 +3,13 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include "Reporter.hh"
+#include "DiagManager.hh"
 #include "Token.hh"
 
 class Scanner {
   std::string source;
   std::vector<Token> tokens;
-  Reporter& reporter;
+  DiagManager& diagManager;
   static const std::unordered_map<std::string, Token::TokenType> keywords;
 
   int start = 0;
@@ -31,6 +31,6 @@ class Scanner {
   bool isAlphaNum(char c);
 
 public:
-  Scanner(std::string, Reporter&);
+  Scanner(std::string, DiagManager&);
   std::vector<Token>& scanTokens();
 };

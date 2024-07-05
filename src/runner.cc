@@ -1,4 +1,4 @@
-#include "Reporter.hh"
+#include "DiagManager.hh"
 #include "runner.hh"
 #include <cstdlib>
 #include <sstream>
@@ -13,7 +13,8 @@
 namespace fs = std::filesystem;
 
 int main(int argc, char* argv[]) {
-  Reporter reporter {};
+
+  DiagManager diagManager {};
 
   if(argc > 2) {
     std::cerr << "Expected 1 argument, got " << argc << "\n";
@@ -29,40 +30,43 @@ int main(int argc, char* argv[]) {
       std::cerr << "Invalid path provided, not a file\n";
       exit(EXIT_FAILURE);
     }
-    runFile(filepath, reporter);
+    runFile(filepath, diagManager);
   }
   else {
-    runConsole(reporter);
+    runConsole(diagManager);
   }
 
   return 0;
 }
 
-void runFile(std::string path, Reporter& reporter) {
+void runFile(std::string path, DiagManager& diagManager) {
   std::ifstream ifs(path);
   std::stringstream buffer;
   buffer << ifs.rdbuf();
-  run(buffer.str(), reporter);
-  if(reporter.hasErrors()) {
-    reporter.reportErrors();
+  run(buffer.str(), diagManager);
+
+  // report warnings and errors
+  diagManager.report();
+  // exit if we encounter any errors
+  if(diagManager.hasErrors()) {
     exit(EXIT_FAILURE);
-  }
-  else {
-    reporter.reportWarnings();
   }
 }
 
-void runConsole(Reporter& reporter) {
+void runConsole(DiagManager& diagManager) {
   std::string cmd;
   std::cout << ">> ";
   while(std::getline(std::cin, cmd)) {
-    run(cmd, reporter);
+    run(cmd, diagManager);
+    // report warnings / errors and clear them
+    diagManager.report();
+    diagManager.clear();
     std::cout << ">> ";
   }
 }
 
-void run(std::string prog, Reporter& reporter) {
-  Scanner scanner{prog, reporter};
+void run(std::string prog, DiagManager& diagManager) {
+  Scanner scanner{prog, diagManager};
   std::vector<Token>& tokens  = scanner.scanTokens();
 
   for(auto& token : tokens) {

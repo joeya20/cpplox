@@ -1,10 +1,10 @@
 #include "Scanner.hh"
-#include "Reporter.hh"
+#include "DiagManager.hh"
 #include "Token.hh"
 #include <vector>
 
-Scanner::Scanner(std::string src, Reporter& reporter)
- : reporter(reporter) {
+Scanner::Scanner(std::string src, DiagManager& diagManager)
+ : diagManager(diagManager) {
   this->source = src;
 }
 
@@ -133,7 +133,7 @@ void Scanner::scanToken() {
       }
       else {
         // TODO: terminal handling
-        reporter.handleError("Unexpected character: " + std::string{c}, line, true);
+        diagManager.handleError("Unexpected character: " + std::string{c}, line);
         break;
       }
   }
@@ -161,7 +161,7 @@ void Scanner::handleString() {
     }
     // check for error
     if (isAtEnd()) {
-      reporter.handleError("Unterminated string.", line);
+      diagManager.handleError("Unterminated string.", line);
       return;
     }
     // The closing ".
@@ -184,7 +184,7 @@ void Scanner::handleNum() {
       }
     }
     else {
-      reporter.handleError("Invalid number literal", line);
+      diagManager.handleError("Invalid number literal", line);
     }
   }
   addToken(Token::TokenType::NUMBER);

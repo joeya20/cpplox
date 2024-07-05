@@ -1,9 +1,9 @@
 #pragma once
 
 #include <string>
-#include "Reporter.hh"
+#include "DiagManager.hh"
 
 int main(int argc, char* argv[]);
-void runFile(std::string path, Reporter& reporter);
-void runConsole(Reporter& reporter);
-void run(std::string prog, Reporter& reporter);
+void runFile(std::string path, DiagManager& diagManager);
+void runConsole(DiagManager& diagManager);
+void run(std::string prog, DiagManager& diagManager);
